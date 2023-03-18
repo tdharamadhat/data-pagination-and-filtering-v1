@@ -53,18 +53,11 @@ Create the `addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
 */
 function addPagination(list) {
- // create a variable to calculate the number of pages needed
   let numOfPages  = Math.ceil(list.length/9);
-
-  // select the element with a class of `link-list` and assign it to a variable
   let linkList = document.querySelector('.link-list');
 
-  // set the innerHTML property of the variable you just created to an empty string
   linkList.innerHTML = '';
   let buttonLi = '';
-  // loop over the number of pages needed
-    // create the elements needed to display the pagination button
-    // insert the above elements
     for (let i = 1; i <=numOfPages; i++){
         buttonLi += ` <li>
                         <button type="button">${i}</button>
@@ -73,15 +66,7 @@ function addPagination(list) {
     }
   linkList.insertAdjacentHTML('beforeend',buttonLi)
   
-  // give the first pagination button a class of "active"
-  document.querySelector('button').className = 'active';
-
-  // create an event listener on the `link-list` element
-
-    // if the click target is a button:
-      // remove the "active" class from the previous button
-      // add the active class to the clicked button
-      // call the showPage function passing the `list` parameter and page to display as arguments;
+  document.querySelector('.link-list button').className = 'active';
   linkList.addEventListener('click', (e) =>{
     const page = e.target;
     if (page.tagName === 'BUTTON'){
@@ -93,6 +78,40 @@ function addPagination(list) {
     
 }
 
-// Call functions
-addPagination(data);
 showPage(data,1);
+addPagination(data);
+
+
+// add Search Component
+const header = document.querySelector('header');
+const searchBox = `<label for="search" class="student-search">
+                <span>Search by name</span>
+                <input id="search" placeholder="Search by name...">
+                <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+                </label>
+              `;
+header.insertAdjacentHTML('beforeend',searchBox);
+
+// add search function
+const search = document.querySelector('#search');
+search.addEventListener('keyup', (e) => {
+  let searchResult = [];
+  const value = e.target.value.toLowerCase();
+  for (let i = 0; i<data.length;i++) {
+      if (data[i].name.first.toLowerCase().match(value)||data[i].name.last.toLowerCase().match(value)){
+        searchResult.push(data[i]);
+      }
+  };
+  //console.log(searchResult);
+
+  if (searchResult.length === 0){
+      //Show message when search not found.
+      const linkList = document.querySelector('.link-list');
+      const studentList = document.querySelector('.student-list');
+      studentList.innerHTML = 'No results found.';
+      linkList.innerHTML = '';
+  } else {
+  showPage(searchResult,1);
+  addPagination(searchResult);
+  }
+});
